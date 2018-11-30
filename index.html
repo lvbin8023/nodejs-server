@@ -21,15 +21,24 @@
         var button = document.querySelector('#button');
         var amount = document.querySelector('#amount');
         button.addEventListener('click', function (event) {
-            var image = document.createElement('img');
-            image.src = '/pay';
-            image.onload = function () {
-                alert('付款成功');
-                amount.innerText -= 1;
-            };
-            image.onerror = function () {
-                alert('付款失败');
-            };
+            var script = document.createElement('script');
+            script.src = '/pay';
+            document.body.appendChild(script);
+            
+            
+            
+            
+            
+            
+            // var image = document.createElement('img');
+            // image.src = '/pay';
+            // image.onload = function () {
+            //     alert('付款成功');
+            //     amount.innerText -= 1;
+            // };
+            // image.onerror = function () {
+            //     alert('付款失败');
+            // };
         })
     </script>
 </body>

@@ -46,12 +46,13 @@ var server = http.createServer(function (request, response) {
         if (Math.random() > 0.5) {
             fs.writeFileSync('./sql', newAmount, 'utf8'); // 存入数据库
             response.statusCode = 200;
-            response.setHeader('Content-Type', 'image/jpg');
-            response.write(fs.readFileSync('./cat.jpg')); // 只是为了让浏览器知道加载成功，图片任意
+            response.setHeader('Content-Type', 'text/javascript');
+            response.write(`
+            amount.innerText -= 1;
+            `); // 只是为了让浏览器知道加载成功，图片任意
         } else {
             response.statusCode = 400;
-            response.setHeader('Content-Type', 'text/json;charset=utf-8');
-            response.write('对不起，付款不成功，请重新支付！');
+            response.write('alert("付款失败")');
         }
         response.end();
     } else {
