@@ -46,8 +46,8 @@ var server = http.createServer(function (request, response) {
         if (Math.random() > 0.5) {
             fs.writeFileSync('./sql', newAmount, 'utf8'); // 存入数据库
             response.statusCode = 200;
-            response.setHeader('Content-Type', 'text/json;charset=utf-8');
-            response.write('付款成功，您的余额是：' + newAmount);
+            response.setHeader('Content-Type', 'image/jpg');
+            response.write(fs.readFileSync('./cat.jpg')); // 只是为了让浏览器知道加载成功，图片任意
         } else {
             response.statusCode = 400;
             response.setHeader('Content-Type', 'text/json;charset=utf-8');

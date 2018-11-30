@@ -11,20 +11,27 @@
 
 <body>
     <h5>您的账户余额是 <span id="amount">$$amount$$</span></h5>
-    <form action="./pay" method="post" target="result"> <!--form表单发送请求-->
+    <button id="button">付款</button>
+    <!--form表单发送请求-->
+    <!-- <form action="./pay" method="post" target="result">
         <input type="submit" value="付款">
-    </form>
-    <iframe name="result" src="about:blank" frameborder="0" height="200"></iframe>
-    <!-- <script>
+    </form> -->
+    <!-- <iframe name="result" src="about:blank" frameborder="0" height="200"></iframe> -->
+    <script>
         var button = document.querySelector('#button');
         var amount = document.querySelector('#amount');
         button.addEventListener('click', function (event) {
-            var n = amount.innerText;
-            var number = parseInt(n, 10);
-            var newNumber = number - 1;
-            amount.innerText = newNumber;
+            var image = document.createElement('img');
+            image.src = '/pay';
+            image.onload = function () {
+                alert('付款成功');
+                amount.innerText -= 1;
+            };
+            image.onerror = function () {
+                alert('付款失败');
+            };
         })
-    </script> -->
+    </script>
 </body>
 
 </html>
