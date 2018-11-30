@@ -24,7 +24,12 @@
             var script = document.createElement('script');
             script.src = '/pay';
             document.body.appendChild(script);
-            
+            script.onload = function (event) {
+                event.currentTarget.remove();
+            };
+            script.onerror = function (event) {
+                event.currentTarget.remove();
+            }
             
             
             
