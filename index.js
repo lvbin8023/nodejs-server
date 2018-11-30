@@ -40,14 +40,16 @@ var server = http.createServer(function (request, response) {
         response.setHeader('Content-Type', 'application/javascript');
         response.write(string);
         response.end();
-    } else if (path === '/pay' && method.toUpperCase() === 'POST') {
+    } else if (path === '/pay') {
         var amount = fs.readFileSync('./sql', 'utf8'); // 当前数据库的数据是100
         var newAmount = amount - 1;
         if (Math.random() > 0.5) {
             fs.writeFileSync('./sql', newAmount, 'utf8'); // 存入数据库
+            response.statusCode = 200;
             response.setHeader('Content-Type', 'text/json;charset=utf-8');
             response.write('付款成功，您的余额是：' + newAmount);
         } else {
+            response.statusCode = 400;
             response.setHeader('Content-Type', 'text/json;charset=utf-8');
             response.write('对不起，付款不成功，请重新支付！');
         }
