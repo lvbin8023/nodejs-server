@@ -1,12 +1,13 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
-var port = process.argv[2];
+// var port = process.argv[2];
+var port = process.env.PORT || 8888;
 
-if (!port) {
-    console.log('请指定端口号好不啦？\nnode server.js 8888 这样不会吗？');
-    process.exit(1);
-}
+// if (!port) {
+//     console.log('请指定端口号好不啦？\nnode server.js 8888 这样不会吗？');
+//     process.exit(1);
+// }
 
 var server = http.createServer(function (request, response) {
     var parsedUrl = url.parse(request.url, true);
@@ -16,7 +17,7 @@ var server = http.createServer(function (request, response) {
         queryString = pathWithQuery.substring(pathWithQuery.indexOf('?'));
     }
     var path = parsedUrl.pathname;
-    var query = parsedUrl.query;
+    var query = parsedUrl.query; // 查询参数
     var method = request.method;
 
     /******** 从这里开始看，上面不要看 ************/
@@ -48,11 +49,13 @@ var server = http.createServer(function (request, response) {
             response.statusCode = 200;
             response.setHeader('Content-Type', 'text/javascript');
             response.write(`
-            amount.innerText -= 1;
-            `); // 只是为了让浏览器知道加载成功，图片任意
+            // 说明jack.com的后端程序员要对lvbin.com的页面细节了解的很清楚
+            // 耦合 解耦
+            ${query.callback}.call(undefined,'success')
+            `);
         } else {
             response.statusCode = 400;
-            response.write('alert("付款失败")');
+            response.write('failed');
         }
         response.end();
     } else {

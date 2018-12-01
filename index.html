@@ -22,19 +22,29 @@
         var amount = document.querySelector('#amount');
         button.addEventListener('click', function (event) {
             var script = document.createElement('script');
-            script.src = '/pay';
+            let functionName = 'lvbin' + parseInt(Math.random() * 10000, 10);
+            window[functionName] = function (result) {
+                if (result === 'success') {
+                    amount.innerText -= 1;
+                } else {
+
+                }
+            }
+            script.src = 'http://lvbin.com:8002/pay?callbackName=' + functionName;
             document.body.appendChild(script);
             script.onload = function (event) {
                 event.currentTarget.remove();
+                delete window[functionName];
             };
             script.onerror = function (event) {
                 event.currentTarget.remove();
+                delete window[functionName];
             }
-            
-            
-            
-            
-            
+
+
+
+
+
             // var image = document.createElement('img');
             // image.src = '/pay';
             // image.onload = function () {
