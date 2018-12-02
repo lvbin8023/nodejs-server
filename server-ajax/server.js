@@ -35,15 +35,17 @@ var server = http.createServer(function (request, response) {
         response.end();
     } else if (path === '/xxx') {
         response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/xml;charset=utf-8');
+        response.setHeader('Content-Type', 'text/json;charset=utf-8');
         response.write(`
-        <note>
-            <to>魏春杰</to>
-            <from>吕彬</from>
-            <heading>打招呼</heading>
-            <body>好久不见!</body>
-        </note>
-        `);
+        {
+            "note":{
+                "to":"魏春杰",
+                "from":"吕彬",
+                "heading":"打招呼",
+                "body":"好久不见！"
+            }
+        }
+        `); // 返回的永远是字符串
         response.end();
     } else {
         response.statusCode = 404;
