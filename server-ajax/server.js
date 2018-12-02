@@ -36,6 +36,7 @@ var server = http.createServer(function (request, response) {
     } else if (path === '/xxx') {
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/json;charset=utf-8');
+        response.setHeader('Access-Control-Allow-Origin', 'http://lvbin.com:8001');// CORS跨域
         response.write(`
         {
             "note":{

@@ -1,6 +1,8 @@
 let myButton = document.querySelector('#myButton');
 myButton.addEventListener('click', function () {
     let request = new XMLHttpRequest();
+    request.open('GET', 'http://jack.com:8002/xxx'); // 配置初始化request
+    request.send(); // 发送请求
     request.onreadystatechange = function (event) {
         if (event.currentTarget.readyState === 4) {
             console.log('请求响应都已经完毕了');
@@ -22,6 +24,4 @@ myButton.addEventListener('click', function () {
             }
         }
     };
-    request.open('GET', '/xxx'); // 配置初始化request
-    request.send(); // 发送请求
 })
