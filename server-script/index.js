@@ -20,13 +20,11 @@ var server = http.createServer(function (request, response) {
     var query = parsedUrl.query; // 查询参数
     var method = request.method;
 
-    /******** 从这里开始看，上面不要看 ************/
-
     console.log('您好：含查询字符串的路径是：\n' + pathWithQuery);
 
     if (path === '/') { // 如果用户请求的是 / 路径
         var string = fs.readFileSync('./index.html', 'utf8');
-        var amount = fs.readFileSync('./sql', 'utf8'); // 当前数据库的数据是100
+        var amount = fs.readFileSync('./sql', 'utf8'); // 当前数据库的数据
         string = string.replace('$$amount$$', amount);
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
         response.write(string);
@@ -42,7 +40,7 @@ var server = http.createServer(function (request, response) {
         response.write(string);
         response.end();
     } else if (path === '/pay') {
-        var amount = fs.readFileSync('./sql', 'utf8'); // 当前数据库的数据是100
+        var amount = fs.readFileSync('./sql', 'utf8'); // 当前数据库的数据
         var newAmount = amount - 1;
         if (Math.random() > 0.5) {
             fs.writeFileSync('./sql', newAmount, 'utf8'); // 存入数据库
