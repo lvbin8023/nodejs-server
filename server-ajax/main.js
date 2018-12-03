@@ -48,7 +48,7 @@ window.jQuery.ajax = function (method, url, successFn, failFn, body) {
 window.$ = window.jQuery;
 
 myButton.addEventListener('click', function (event) {
-    window.jQuery.ajax(
+    window.$.ajax(
         'POST',
         '/xxx',
         (responseText) => {
