@@ -31,9 +31,14 @@ let myButton = document.querySelector('#myButton');
 // 封装成jQuery.ajax
 window.jQuery = {}; // 命名空间
 window.jQuery.ajax = function (options) {
-
+    let url;
+    if (arguments.length === 1) {
+        url = options.url;
+    } else if (arguments.length === 2) {
+        url = arguments[0];
+        options = arguments[1];
+    }
     let method = options.method;
-    let url = options.url;
     let headers = options.headers;
     let successFn = options.successFn;
     let failFn = options.failFn;
@@ -41,9 +46,9 @@ window.jQuery.ajax = function (options) {
 
     let request = new XMLHttpRequest();
     request.open(method, url); // 配置初始化request
-    for (let key in headers ) {
+    for (let key in headers) {
         let value = headers[key];
-        request.setRequestHeader(key,value);
+        request.setRequestHeader(key, value);
     }
     request.onreadystatechange = function () {
         if (request.readyState === 4) {
