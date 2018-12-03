@@ -30,9 +30,21 @@ let myButton = document.querySelector('#myButton');
 
 // 封装成jQuery.ajax
 window.jQuery = {}; // 命名空间
-window.jQuery.ajax = function (method, url, successFn, failFn, body) {
+window.jQuery.ajax = function (options) {
+
+    let method = options.method;
+    let url = options.url;
+    let headers = options.headers;
+    let successFn = options.successFn;
+    let failFn = options.failFn;
+    let body = options.body;
+
     let request = new XMLHttpRequest();
     request.open(method, url); // 配置初始化request
+    for (let key in headers ) {
+        let value = headers[key];
+        request.setRequestHeader(key,value);
+    }
     request.onreadystatechange = function () {
         if (request.readyState === 4) {
             if (request.status >= 200 && request.status < 300) {
@@ -47,15 +59,26 @@ window.jQuery.ajax = function (method, url, successFn, failFn, body) {
 
 window.$ = window.jQuery;
 
+function f1(responseText) {};
+
+function f2(responseText) {};
+
 myButton.addEventListener('click', function (event) {
-    window.$.ajax(
-        'POST',
-        '/xxx',
-        (responseText) => {
-            console.log(responseText)
+    window.$.ajax({
+        method: 'GET',
+        url: '/lvbin.com',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'lvbin': 18
         },
-        (request) => {
-            console.log(request)
+        successFn: (x) => {
+            f1.call(undefined, x);
+            f2.call(undefined, x);
         },
-        'a=1&&b=2');
+        failFn: (y) => {
+            console.log(y.status);
+            console.log(y.responseText);
+        },
+        body: 'a=1&&b=2'
+    });
 })
