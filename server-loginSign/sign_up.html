@@ -5,7 +5,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="./style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      border: 1px solid red;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-wrapper {
+      padding: 20px;
+      border: 1px solid #ddd;
+      min-width: 380px;
+    }
+
+    .form-wrapper .row {
+      margin: 10px 0;
+    }
+
+    .form-wrapper .row>label {
+      display: inline-block;
+      min-width: 4em;
+    }
+
+    .form-wrapper .row:last-child {
+      text-align: center;
+    }
+
+    .form-wrapper .row:last-child>input {
+      padding: 5px 10px;
+    }
+  </style>
   <title>Document</title>
 </head>
 
@@ -16,14 +57,17 @@
       <div class="row">
         <label>邮箱</label>
         <input type="text" name="email">
+        <span class="error"></span>
       </div>
       <div class="row">
         <label>密码</label>
         <input type="password" name="password">
+        <span class="error"></span>
       </div>
       <div class="row">
         <label>确认密码</label>
         <input type="password" name="password_confirmation">
+        <span class="error"></span>
       </div>
       <div class="row">
         <input type="submit" value="注册">
@@ -34,14 +78,37 @@
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
   <script>
     var hash = {};
-    $('#signUpForm').on('submit', function (event) {
+    var $form = $('#signUpForm')
+    $form.on('submit', function (event) {
       event.preventDefault();
       var need = ['email', 'password', 'password_confirmation'];
       need.forEach(function (name) {
-        var value = $('#signUpForm').find(`[name=${name}]`).val();
+        var value = $form.find(`[name=${name}]`).val();
         hash[name] = value;
       })
-      console.log(hash);
+
+      if (hash['email'] === '') {
+        $form.find('[name="email"]').siblings('.error').text('请输入邮箱');
+        return false;
+      }
+      if (hash['password'] === '') {
+        $form.find('[name="password"]').siblings('.error').text('请输入密码');
+        return false;
+      }
+      if (hash['password_confirmation'] === '') {
+        $form.find('[name="password_confirmation"]').siblings('.error').text('请输入邮箱');
+        return false;
+      }
+      $.post('/sign_up', hash).then(function (response) {
+        console.log(response);
+      }, function (request) {
+        var {
+          errors
+        } = request.responseJSON;
+        if (errors.email && errors.email === 'invalid') {
+          $form.find('[name="email"]').siblings('.error').text('邮箱格式错误');
+        }
+      })
     })
   </script>
 </body>
