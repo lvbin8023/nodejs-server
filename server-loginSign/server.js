@@ -22,28 +22,32 @@ var server = http.createServer(function (request, response) {
     console.log('您好，含查询字符串的路径是：\n' + pathWithQuery);
 
     if (path === '/') {
-        let string = fs.readFileSync('./index.html', 'utf-8');
+        var string = fs.readFileSync('./index.html', 'utf-8');
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
         response.write(string);
         response.end();
     } else if (path === '/sign_up' && method === 'GET') {
-        let string = fs.readFileSync('./sign_up.html', 'utf-8');
+        var string = fs.readFileSync('./sign_up.html', 'utf-8');
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
         response.write(string);
         response.end();
     } else if (path === '/sign_up' && method === 'POST') {
         readBody(request).then(function (body) {
-            let hash = [];
-            let strings = body.split('&'); // ['email=1', 'password=2', 'password_confirmation=3']
+            var hash = [];
+            var strings = body.split('&'); // ['email=1', 'password=2', 'password_confirmation=3']
             strings.forEach(function (string) {
-                let parts = string.split('=');
-                let key = parts[0];
-                let value = parts[1];
-                hash[key] = value;
+                var parts = string.split('=');
+                var key = parts[0];
+                var value = parts[1];
+                hash[key] = decodeURIComponent(value);
             });
-            let {email, password, password_confirmation} = hash;
+            let {
+                email,
+                password,
+                password_confirmation
+            } = hash;
             if (email.indexOf('@') === -1) {
                 response.statusCode = 400;
                 response.setHeader('Content-Type', 'text/json;charset=utf-8');
@@ -56,12 +60,37 @@ var server = http.createServer(function (request, response) {
                 response.statusCode = 400;
                 response.write('password not match');
             } else {
-                response.statusCode = 200;
+                var users = fs.readFileSync('./db/users', 'utf-8');
+                try {
+                    users = JSON.parse(users);
+                } catch (exception) {
+                    users = [];
+                }
+                var inUse = false;
+                for (var i = 0; i < users.length; i++) {
+                    var user = users[i];
+                    if (user.email === email) {
+                        inUse = true;
+                        break;
+                    }
+                }
+                if (inUse) {
+                    response.statusCode = 400;
+                    response.write('email in use');
+                } else {
+                    users.push({
+                        email: email,
+                        password: password
+                    });
+                    var usersString = JSON.stringify(users);
+                    fs.writeFileSync('./db/users', usersString);
+                    response.statusCode = 200;
+                }
             }
             response.end();
         });
     } else if (path === '/main.js') {
-        let string = fs.readFileSync('./main.js', 'utf-8');
+        var string = fs.readFileSync('./main.js', 'utf-8');
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/javascript;charset=utf-8');
         response.write(string);
@@ -95,7 +124,7 @@ var server = http.createServer(function (request, response) {
 // 封装获取body数据的函数
 function readBody(request) {
     return new Promise(function (resolve, reject) {
-        let body = [];
+        var body = [];
         request.on('data', function (chunk) {
             body.push(chunk);
         }).on('end', function () {
