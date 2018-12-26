@@ -21,14 +21,8 @@ var server = http.createServer(function (request, response) {
 
     console.log('您好，含查询字符串的路径是：\n' + pathWithQuery);
 
-    if (path === '/') {
-        var string = fs.readFileSync('./index.html', 'utf-8');
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/html;charset=utf-8');
-        response.write(string);
-        response.end();
-    } else if (path === '/sign_up' && method === 'GET') {
-        var string = fs.readFileSync('./sign_up.html', 'utf-8');
+    if (path === '/sign_up' && method === 'GET') {
+        var string = fs.readFileSync('./sign_up.html', 'utf8');
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
         response.write(string);
@@ -36,7 +30,7 @@ var server = http.createServer(function (request, response) {
     } else if (path === '/sign_up' && method === 'POST') {
         readBody(request).then(function (body) {
             var hash = [];
-            var strings = body.split('&'); // ['email=1', 'password=2', 'password_confirmation=3']
+            var strings = body.split('&'); // ['email=1', 'password=2', 'password_confirmation=2']
             strings.forEach(function (string) {
                 var parts = string.split('=');
                 var key = parts[0];
@@ -60,7 +54,7 @@ var server = http.createServer(function (request, response) {
                 response.statusCode = 400;
                 response.write('password not match');
             } else {
-                var users = fs.readFileSync('./db/users', 'utf-8');
+                var users = fs.readFileSync('./db/users', 'utf8');
                 try {
                     users = JSON.parse(users);
                 } catch (exception) {
@@ -89,27 +83,6 @@ var server = http.createServer(function (request, response) {
             }
             response.end();
         });
-    } else if (path === '/main.js') {
-        var string = fs.readFileSync('./main.js', 'utf-8');
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/javascript;charset=utf-8');
-        response.write(string);
-        response.end();
-    } else if (path === '/xxx') {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/json;charset=utf-8');
-        response.setHeader('Access-Control-Allow-Origin', 'http://lvbin.com:8001'); // CORS跨域
-        response.write(`
-        {
-            "note":{
-                "to":"魏春杰",
-                "from":"吕彬",
-                "heading":"打招呼",
-                "body":"好久不见！"
-            }
-        }
-        `); // 返回的永远是字符串
-        response.end();
     } else {
         response.statusCode = 404;
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
