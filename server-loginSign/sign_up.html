@@ -86,30 +86,24 @@
         var value = $form.find(`[name=${name}]`).val();
         hash[name] = value;
       })
-      $form.find('.error').each(function (index, span) {
+      $form.find('span.error').each((index, span) => {
         $(span).text('');
-      })
-
-      let {email, password, password_confirmation} = hash;
-      if (email === '') {
-        $form.find('[name="email"]').siblings('span.error').text('请输入邮箱');
-        return false;
-      }
-      if (email.indexOf('@') === -1) {
+      });
+      let {
+        email,
+        password,
+        password_confirmation
+      } = hash;
+      if (email === '' || email.indexOf('@') === -1) {
         $form.find('[name="email"]').siblings('span.error').text('邮箱格式错误');
-        return false;
-      }
-      if (password === '') {
+      } else if (password === '') {
         $form.find('[name="password"]').siblings('span.error').text('请输入密码');
-        return false;
-      }
-      if (password_confirmation === '') {
+      } else if (password_confirmation === '') {
         $form.find('[name="password_confirmation"]').siblings('span.error').text('请确认密码');
-        return false;
-      }
-      if (password_confirmation !== password) {
+      } else if (password_confirmation !== password) {
         $form.find('[name="password_confirmation"]').siblings('span.error').text('密码不匹配');
-        return false;
+      } else {
+        $form.find('[name="password_confirmation"]').siblings('span.error').text('注册成功');
       }
       $.post('/sign_up', hash).then(function (response) {
         console.log(response);
