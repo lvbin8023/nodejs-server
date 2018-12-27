@@ -47,13 +47,13 @@
       padding: 5px 10px;
     }
   </style>
-  <title>注册</title>
+  <title>登录</title>
 </head>
 
 <body>
   <div class="form-wrapper">
-    <h1>注册</h1>
-    <form id="signUpForm">
+    <h1>登录</h1>
+    <form id="signInForm">
       <div class="row">
         <label>邮箱</label>
         <input type="text" name="email">
@@ -65,12 +65,7 @@
         <span class="error"></span>
       </div>
       <div class="row">
-        <label>确认密码</label>
-        <input type="password" name="password_confirmation">
-        <span class="error"></span>
-      </div>
-      <div class="row">
-        <input type="submit" value="注册">
+        <input type="submit" value="登录">
       </div>
     </form>
   </div>
@@ -78,10 +73,10 @@
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
   <script>
     var hash = {};
-    var $form = $('#signUpForm')
+    var $form = $('#signInForm')
     $form.on('submit', function (event) {
       event.preventDefault();
-      var need = ['email', 'password', 'password_confirmation'];
+      var need = ['email', 'password'];
       need.forEach(function (name) {
         var value = $form.find(`[name=${name}]`).val();
         hash[name] = value;
@@ -90,31 +85,19 @@
         $(span).text('');
       })
 
-      let {email, password, password_confirmation} = hash;
-      if (email === '') {
-        $form.find('[name="email"]').siblings('span.error').text('请输入邮箱');
+      if (hash['email'] === '' || hash['email'].indexOf('@') === -1) {
+        $form.find('[name="email"]').siblings('.error').text('邮箱错误');
         return false;
       }
-      if (email.indexOf('@') === -1) {
-        $form.find('[name="email"]').siblings('span.error').text('邮箱格式错误');
+      if (hash['password'] === '') {
+        $form.find('[name="password"]').siblings('.error').text('请输入密码');
         return false;
       }
-      if (password === '') {
-        $form.find('[name="password"]').siblings('span.error').text('请输入密码');
-        return false;
-      }
-      if (password_confirmation === '') {
-        $form.find('[name="password_confirmation"]').siblings('span.error').text('请确认密码');
-        return false;
-      }
-      if (password_confirmation !== password) {
-        $form.find('[name="password_confirmation"]').siblings('span.error').text('密码不匹配');
-        return false;
-      }
-      $.post('/sign_up', hash).then(function (response) {
-        console.log(response);
+
+      $.post('/sign_in', hash).then(function (response) {
+        window.location.href='/';
       }, function (request) {
-        console.log(request);
+        alert('登录失败，请重新尝试');
       })
     })
   </script>

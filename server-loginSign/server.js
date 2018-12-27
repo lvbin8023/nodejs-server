@@ -21,7 +21,36 @@ var server = http.createServer(function (request, response) {
 
     console.log('您好，含查询字符串的路径是：\n' + pathWithQuery);
 
-    if (path === '/sign_up' && method === 'GET') {
+    if (path === '/') {
+        var string = fs.readFileSync('./index.html', 'utf8');
+        var cookies = request.headers.cookie.split('; ');
+        var hash = {};
+        for (var i=0;i<cookies.length;i++) {
+           var parts = cookies[i].split('=');
+           var key = parts[0];
+           var value = parts[1];
+           hash[key] = value; 
+        }
+        var email = hash.sign_in_email;
+        var users = fs.readFileSync('./db/users','utf8');
+        users = JSON.parse(users);
+        var foundUsers;
+        for (var j=0;j<users.length;j++) {
+            if (users[j].email === email) {
+                foundUsers = users[j];
+                break;
+            }
+        }
+        if (foundUsers) {
+            string = string.replace('__password__',foundUsers.password);
+        } else {
+            string = string.replace('__password__','不知道');
+        }
+        response.statusCode = 200;
+        response.setHeader('Content-Type', 'text/html;charset=utf-8');
+        response.write(string);
+        response.end();
+    } else if (path === '/sign_up' && method === 'GET') {
         var string = fs.readFileSync('./sign_up.html', 'utf8');
         response.statusCode = 200;
         response.setHeader('Content-Type', 'text/html;charset=utf-8');
@@ -62,8 +91,7 @@ var server = http.createServer(function (request, response) {
                 }
                 var inUse = false;
                 for (var i = 0; i < users.length; i++) {
-                    var user = users[i];
-                    if (user.email === email) {
+                    if (users[i].email === email) {
                         inUse = true;
                         break;
                     }
@@ -80,6 +108,47 @@ var server = http.createServer(function (request, response) {
                     fs.writeFileSync('./db/users', usersString);
                     response.statusCode = 200;
                 }
+            }
+            response.end();
+        });
+    } else if (path === '/sign_in' && method === 'GET') {
+        var string = fs.readFileSync('./sign_in.html', 'utf8');
+        response.statusCode = 200;
+        response.setHeader('Content-Type', 'text/html;charset=utf-8');
+        response.write(string);
+        response.end();
+    } else if (path === '/sign_in' && method === 'POST') {
+        readBody(request).then(function (body) {
+            var hash = [];
+            var strings = body.split('&'); // ['email=1', 'password=2', 'password_confirmation=2']
+            strings.forEach(function (string) {
+                var parts = string.split('=');
+                var key = parts[0];
+                var value = parts[1];
+                hash[key] = decodeURIComponent(value);
+            });
+            let {
+                email,
+                password
+            } = hash;
+            var users = fs.readFileSync('./db/users', 'utf8');
+            try {
+                users = JSON.parse(users);
+            } catch (exception) {
+                users = [];
+            }
+            var found = false;
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].email === email && users[i].password === password) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                response.setHeader('Set-Cookie', `sign_in_email=${email}`);
+                response.statusCode = 200;
+            } else {
+                response.statusCode = 401;
             }
             response.end();
         });
