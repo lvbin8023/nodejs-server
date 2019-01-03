@@ -25,6 +25,7 @@ let server = http.createServer(function (request, response) {
 
     if (path === '/') {
         let string = fs.readFileSync('./index.html', 'utf8');
+        /* cookie
         let cookies = '';
         if (request.headers.cookie) {
             cookies = request.headers.cookie.split('; ');
@@ -37,6 +38,9 @@ let server = http.createServer(function (request, response) {
             hash[key] = value;
         }
         let mySessions = sessions[hash.sessionId];
+        */
+        // 不基于cookie的session
+        let mySessions = sessions[query.sessionId];
         let email;
         if (mySessions) {
             email = mySessions.sign_in_email;
@@ -156,7 +160,7 @@ let server = http.createServer(function (request, response) {
             if (found) {
                 let sessionId = parseInt(Math.random() * 1000000); //随机数sessionId
                 sessions[sessionId] = {sign_in_email: email};
-                response.setHeader('Set-Cookie', `sessionId=${sessionId}`);
+                response.write(`{"sessionId":${sessionId}}`);
                 response.statusCode = 200;
             } else {
                 response.statusCode = 401;

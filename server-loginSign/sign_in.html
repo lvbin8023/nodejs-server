@@ -34,7 +34,7 @@
       margin: 10px 0;
     }
 
-    .form-wrapper .row>label {
+    .form-wrapper .row > label {
       display: inline-block;
       min-width: 4em;
     }
@@ -43,7 +43,7 @@
       text-align: center;
     }
 
-    .form-wrapper .row:last-child>input {
+    .form-wrapper .row:last-child > input {
       padding: 5px 10px;
     }
   </style>
@@ -51,56 +51,59 @@
 </head>
 
 <body>
-  <div class="form-wrapper">
-    <h1>登录</h1>
-    <form id="signInForm">
-      <div class="row">
-        <label>邮箱</label>
-        <input type="text" name="email">
-        <span class="error"></span>
-      </div>
-      <div class="row">
-        <label>密码</label>
-        <input type="password" name="password">
-        <span class="error"></span>
-      </div>
-      <div class="row">
-        <input type="submit" value="登录">
-      </div>
-    </form>
-  </div>
+<div class="form-wrapper">
+  <h1>登录</h1>
+  <form id="signInForm">
+    <div class="row">
+      <label>邮箱</label>
+      <input type="text" name="email">
+      <span class="error"></span>
+    </div>
+    <div class="row">
+      <label>密码</label>
+      <input type="password" name="password">
+      <span class="error"></span>
+    </div>
+    <div class="row">
+      <input type="submit" value="登录">
+    </div>
+  </form>
+</div>
 
-  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-  <script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script>
     let hash = {};
     let $form = $('#signInForm');
     $form.on('submit', function (event) {
-      event.preventDefault();
-      let need = ['email', 'password'];
-      need.forEach(function (name) {
-        let value = $form.find(`[name=${name}]`).val();
-        hash[name] = value;
-      });
-      $form.find('.error').each(function (index, span) {
-        $(span).text('');
-      });
+        event.preventDefault();
+        let need = ['email', 'password'];
+        need.forEach(function (name) {
+            let value = $form.find(`[name=${name}]`).val();
+            hash[name] = value;
+        });
+        $form.find('.error').each(function (index, span) {
+            $(span).text('');
+        });
 
-      if (hash['email'] === '' || hash['email'].indexOf('@') === -1) {
-        $form.find('[name="email"]').siblings('.error').text('邮箱错误');
-        return false;
-      }
-      if (hash['password'] === '') {
-        $form.find('[name="password"]').siblings('.error').text('请输入密码');
-        return false;
-      }
+        if (hash['email'] === '' || hash['email'].indexOf('@') === -1) {
+            $form.find('[name="email"]').siblings('.error').text('邮箱错误');
+            return false;
+        }
+        if (hash['password'] === '') {
+            $form.find('[name="password"]').siblings('.error').text('请输入密码');
+            return false;
+        }
 
-      $.post('/sign_in', hash).then(function (response) {
-        window.location.href='/';
-      }, function (request) {
-        alert('登录失败，请重新尝试');
-      })
+        $.post('/sign_in', hash).then(function (response) {
+            let object = JSON.parse(response);
+            localStorage.setItem('sessionId', object.sessionId);
+            window.location.href = `/?sessionId=${object.sessionId}`;
+            // window.location.href = '/';
+        }, function (request) {
+            alert('登录失败，请重新尝试');
+        })
     })
-  </script>
+</script>
 </body>
 
 </html>
