@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/jquery, Tween, av, font_865975_1jelxqdlpj6, font_931013_ehff2d7yf9, jquery, jquery-2.1.1, jquery-3.3.1}" />
-    <includedPredefinedLibrary name="HTTP Response Handler" />
-    <includedPredefinedLibrary name="Node.js Core" />
-  </component>
-</project>
