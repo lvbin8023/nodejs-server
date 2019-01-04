@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const port = process.argv[2];
+const md5 = require('md5');
 
 if (!port) {
     console.log('请指定端口号:\nnode server.js 8888 类似于上面的格式');
@@ -26,14 +27,19 @@ let server = http.createServer(function (request, response) {
     if (path === '/css/default.css') {
         let string = fs.readFileSync('./css/default.css', 'utf8');
         response.setHeader('Content-Type', 'text/css;charset=utf-8');
-        response.setHeader('Cache-Control', 'max-age=300');
+        response.setHeader('Cache-Control', 'max-age=30');
         response.write(string);
         response.end();
     } else if (path === '/js/main.js') {
         let string = fs.readFileSync('./js/main.js', 'utf8');
         response.setHeader('Content-Type', 'application/javascript;charset=utf-8');
-        response.setHeader('Cache-Control', 'max-age=30');
-        response.write(string);
+        let fileMd5 = md5(string);
+        response.setHeader('ETag', fileMd5);
+        if (request.headers['if-none-match'] === fileMd5) {
+            response.statusCode = 304;
+        } else {
+            response.write(string);
+        }
         response.end();
     } else if (path === '/') {
         let string = fs.readFileSync('./index.html', 'utf8');
